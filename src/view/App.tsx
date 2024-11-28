@@ -25,6 +25,49 @@ function App() {
     }
   }, [])
 
+const [searchTerm, setSearchTerm] = useState<string>("");
+
+const searchedStudents = students.filter(student => 
+  student.name.includes(searchTerm)
+);
+
+const searchedList = searchedStudents.map(student => (
+  <div className='student' key={student._id}>
+    <p>姓名: {student.name}</p>
+    <p>帳號: {student.userName}</p>
+  </div>
+));
+
+// In your JSX
+<div className="name-search">
+  <h2>姓名搜尋</h2>
+  <input 
+    type="text" 
+    value={searchTerm} 
+    onChange={e => setSearchTerm(e.target.value)} 
+    placeholder="搜尋姓名" 
+  />
+  {searchedList}
+</div>
+
+
+    // Function to calculate department statistics
+const getDepartmentStatistics = () => {
+  const stats: Record<string, number> = {};
+  students.forEach(student => {
+    stats[student.department] = (stats[student.department] || 0) + 1;
+  });
+  return stats;
+};
+
+const departmentStats = getDepartmentStatistics();
+
+const departmentList = Object.entries(departmentStats).map(([department, count]) => (
+  <div key={department}>
+    <p>{department}: {count} 人</p>
+  </div>
+));
+
   const studentList = students ? students.map((student: Student) => {
     return (
       <div className='student' key={student._id}>
@@ -34,18 +77,38 @@ function App() {
         <p>院系: {student.department}</p>
         <p>年級: {student.grade}</p>
         <p>班級: {student.class}</p>
-        <p>Email: {student.Email}</p>
+        <p>Email: {student.email}</p>
         <p>缺席次數: {student.absences ? student.absences : 0}</p>
       </div>
     )
   }) : "loading"
 
+
+
+
   return (
     <>
+    {/* Name Search */}
+    <div className="name-search">
+        <h2>姓名搜尋</h2>
+        <input 
+          type="text" 
+          //value={searchTerm} 
+          onChange={e => setSearchTerm(e.target.value)} 
+          //placeholder="搜尋姓名" 
+        />
+        {searchedList}
+      </div>
+    <div className="department-stats">
+    <h2>科系人數統計</h2>
+    {departmentList}
+  </div>
       <div className="container">
         {studentList}
       </div>
-    </>
+    
+  </>
+  
   )
 }
 
